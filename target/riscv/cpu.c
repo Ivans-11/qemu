@@ -2091,7 +2091,7 @@ static RISCVCPUProfile RVA23S64 = {
  * ".profile = &RVServerRef1_0;".
  */
 static RISCVCPUProfile RVServerRef1_0 = {
-    .s_parent = &RVA22S64,
+    .s_parent = &RVA23S64,
     .name = "rvserver-ref-1.0",
     .satp_mode = VM_1_10_SV48,
     .ext_offsets = {

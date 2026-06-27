@@ -226,6 +226,13 @@ static bool sdtrig_needed(void *opaque)
     return cpu->cfg.ext_sdtrig;
 }
 
+static bool sdext_needed(void *opaque)
+{
+    RISCVCPU *cpu = opaque;
+
+    return cpu->cfg.ext_sdext;
+}
+
 static int sdtrig_post_load(void *opaque, int version_id)
 {
     RISCVCPU *cpu = opaque;
@@ -268,8 +275,7 @@ static const VMStateDescription vmstate_sdext = {
     .name = "cpu/sdext",
     .version_id = 1,
     .minimum_version_id = 1,
-    .needed = sdtrig_needed,
-    .post_load = sdtrig_post_load,
+    .needed = sdext_needed,
     .fields = (const VMStateField[]) {
         VMSTATE_BOOL_V(env.debug_mode, RISCVCPU, 3),
         VMSTATE_UINTTL_V(env.dcsr, RISCVCPU, 3),
