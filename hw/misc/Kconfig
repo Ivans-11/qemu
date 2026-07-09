@@ -212,6 +212,10 @@ config ROCKCHIP_RKNN
     bool
     select REGISTER
 
+config ROCKCHIP_IOMMU
+    bool
+    select REGISTER
+
 config MAC_VIA
     bool
     select MOS6522

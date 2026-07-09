@@ -183,6 +183,7 @@ system_ss.add(when: 'CONFIG_MAC_VIA', if_true: files('mac_via.c'))
 
 system_ss.add(when: 'CONFIG_RK3588_CRU', if_true: files('rk3588_cru.c'))
 system_ss.add(when: 'CONFIG_RK3588_SCMI', if_true: files('rk3588_scmi.c'))
+system_ss.add(when: 'CONFIG_ROCKCHIP_IOMMU', if_true: files('rockchip_iommu.c'))
 system_ss.add(when: 'CONFIG_ROCKCHIP_RKNN', if_true: files('rockchip_rknn.c'))
 system_ss.add(when: 'CONFIG_NXP_S32_MC_ME', if_true: files('nxp_s32_mc_me.c'))
 
