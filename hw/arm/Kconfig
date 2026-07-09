@@ -208,6 +208,7 @@ config RK3588_EVB
     select ROCKCHIP_SYSCON
     select RK3588_SCMI
     select ROCKCHIP_GPIO
+    select ROCKCHIP_RKNN
     select SDHCI
     select SERIAL_MM
     select UNIMP
