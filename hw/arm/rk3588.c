@@ -220,6 +220,11 @@ typedef struct RK3588BootROM {
     bool spl_loaded;
 } RK3588BootROM;
 
+typedef enum RK3588RknpuFdtTopology {
+    RK3588_RKNPU_FDT_PER_CORE,
+    RK3588_RKNPU_FDT_AGGREGATE,
+} RK3588RknpuFdtTopology;
+
 typedef struct RK3588BoardConfig {
     const char *machine_name;
     const char *desc;
@@ -230,6 +235,7 @@ typedef struct RK3588BoardConfig {
     unsigned int firmware_sd_unit;
     uint32_t brom_bootsource;
     bool default_zvm_ram;
+    RK3588RknpuFdtTopology rknpu_fdt_topology;
 } RK3588BoardConfig;
 
 static const char * const rk3588_evb_compatible[] = {
@@ -255,6 +261,7 @@ static const RK3588BoardConfig rk3588_evb_board = {
     .firmware_sd_unit = 0,
     .brom_bootsource = RK3588_BROM_BOOTSOURCE_EMMC,
     .default_zvm_ram = false,
+    .rknpu_fdt_topology = RK3588_RKNPU_FDT_AGGREGATE,
 };
 
 static const RK3588BoardConfig rk3588s_roc_pc_board = {
@@ -267,6 +274,7 @@ static const RK3588BoardConfig rk3588s_roc_pc_board = {
     .firmware_sd_unit = 2,
     .brom_bootsource = RK3588_BROM_BOOTSOURCE_SD,
     .default_zvm_ram = true,
+    .rknpu_fdt_topology = RK3588_RKNPU_FDT_PER_CORE,
 };
 
 struct RK3588MachineState {
@@ -310,7 +318,6 @@ struct RK3588MachineState {
     bool firmware_atf_entered;
     bool zvm_ram;
     bool rknpu;
-    bool rknpu_vendor_fdt;
     RK3588BootROM bootrom_state;
 };
 
@@ -1657,7 +1664,7 @@ static void *rk3588_get_dtb(const struct arm_boot_info *binfo, int *fdt_size)
     rk3588_fdt_add_gmac_nodes(s, fdt, clk_phandle, sys_grf_ph, php_grf_ph);
     rk3588_fdt_add_pcie_node(fdt, cru_phandle, clk_phandle, its1_phandle);
     if (s->rknpu) {
-        if (s->rknpu_vendor_fdt) {
+        if (s->board->rknpu_fdt_topology == RK3588_RKNPU_FDT_AGGREGATE) {
             rk3588_fdt_add_rknpu_vendor_node(fdt, cru_phandle, clk_phandle);
         } else {
             rk3588_fdt_add_rknpu_core_nodes(fdt, cru_phandle, clk_phandle);
@@ -2704,10 +2711,6 @@ static void rk3588_create_rknpu(RK3588MachineState *s)
         RK3588_RKNN2_SPI,
     };
 
-    if (s->rknpu_vendor_fdt && !s->rknpu) {
-        error_report("rknpu-vendor-fdt requires rknpu=on");
-        exit(EXIT_FAILURE);
-    }
     if (!s->rknpu) {
         return;
     }
@@ -3131,20 +3134,6 @@ static void rk3588_set_rknpu(Object *obj, bool value, Error **errp)
     s->rknpu = value;
 }
 
-static bool rk3588_get_rknpu_vendor_fdt(Object *obj, Error **errp)
-{
-    RK3588MachineState *s = RK3588_MACHINE(obj);
-
-    return s->rknpu_vendor_fdt;
-}
-
-static void rk3588_set_rknpu_vendor_fdt(Object *obj, bool value, Error **errp)
-{
-    RK3588MachineState *s = RK3588_MACHINE(obj);
-
-    s->rknpu_vendor_fdt = value;
-}
-
 static void rk3588_machine_instance_init(Object *obj,
                                          const RK3588BoardConfig *board)
 {
@@ -3153,7 +3142,6 @@ static void rk3588_machine_instance_init(Object *obj,
     s->board = board;
     s->zvm_ram = board->default_zvm_ram;
     s->rknpu = false;
-    s->rknpu_vendor_fdt = false;
 }
 
 static void rk3588_evb_machine_instance_init(Object *obj)
@@ -3191,12 +3179,6 @@ static void rk3588_machine_class_init(ObjectClass *oc,
     object_class_property_set_description(oc, "rknpu",
                                           "Enable RK3588 RKNN/RKNPU "
                                           "accelerator cores");
-    object_class_property_add_bool(oc, "rknpu-vendor-fdt",
-                                   rk3588_get_rknpu_vendor_fdt,
-                                   rk3588_set_rknpu_vendor_fdt);
-    object_class_property_set_description(
-        oc, "rknpu-vendor-fdt",
-        "Expose the aggregate vendor-driver RK3588 RKNPU FDT binding");
 }
 
 static void rk3588_evb_machine_class_init(ObjectClass *oc, const void *data)
