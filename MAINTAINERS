@@ -222,6 +222,7 @@ F: tests/tcg/arm/
 F: tests/tcg/aarch64/
 F: tests/qtest/arm-cpu-features.c
 F: hw/arm/
+F: include/hw/arm/arm-smc.h
 F: hw/cpu/a*mpcore.c
 F: include/hw/cpu/a*mpcore.h
 F: docs/system/target-arm.rst
@@ -1057,6 +1058,24 @@ F: hw/intc/realview_gic.c
 F: include/hw/intc/realview_gic.h
 F: docs/system/arm/realview.rst
 F: tests/functional/arm/test_realview.py
+
+Rockchip RK3588
+M: Chao Liu <chao.liu@processmission.com>
+M: Yifan Wang <w-yf22@mails.tsinghua.edu.cn>
+L: qemu-arm@nongnu.org
+S: Maintained
+F: hw/arm/rk3588.c
+F: hw/arm/rock-5b.c
+F: hw/misc/rockchip_cru.c
+F: hw/misc/rockchip_otp.c
+F: hw/misc/rk3588-scmci.c
+F: hw/ssi/rockchip_sfc.c
+F: hw/timer/rockchip-hptimer.c
+F: include/hw/arm/rk3588.h
+F: include/hw/misc/rk3588-scmci.h
+F: include/hw/timer/rockchip-hptimer.h
+F: docs/system/arm/rock-5b.rst
+F: tests/functional/aarch64/test_rock_5b.py
 
 SABRELITE / i.MX6
 M: Peter Maydell <peter.maydell@linaro.org>

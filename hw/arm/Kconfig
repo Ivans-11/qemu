@@ -774,3 +774,19 @@ config AXIADO_EVK
     default y
     depends on TCG && ARM
     select AXIADO_SOC
+
+config RK3588
+    bool
+    select ARM_GIC
+    select CPU_CLUSTER
+    select DW8250
+    select REGISTER
+    select ROCKCHIP_SFC
+    select UNIMP
+
+config ROCK5B
+    bool
+    default y
+    depends on TCG && AARCH64
+    select RK3588
+    select SSI_M25P80
